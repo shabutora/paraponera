@@ -1,4 +1,4 @@
-package net.iyh.vo;
+package net.iyh.vo.image;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;

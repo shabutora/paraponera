@@ -11,5 +11,5 @@ import lombok.Data;
 public class RegistryHost {
   private String name;
   private int port;
-  private String version;
+  private String version = "v2";
 }

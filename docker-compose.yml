@@ -1,0 +1,14 @@
+redis:
+  image: redis:3.0.3
+  ports:
+    - 6379:6379
+  volumes:
+    - ./data/redis:/data
+
+elastic:
+  image: elasticsearch:1.7.1
+  ports:
+    - 9200:9200
+    - 9300:9300
+#  volumes:
+#    - ./data/elastic:/usr/share/elasticsearch/data
