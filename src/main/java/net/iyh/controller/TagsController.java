@@ -1,4 +1,4 @@
-package net.iyh.controller.view;
+package net.iyh.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
