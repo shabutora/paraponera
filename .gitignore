@@ -183,4 +183,5 @@ build/
 dist/
 
 # application ignore
-data/
+data
+**/static/components

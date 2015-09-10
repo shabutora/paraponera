@@ -5,10 +5,9 @@ redis:
   volumes:
     - ./data/redis:/data
 
-#elastic:
-#  image: elasticsearch:1.7.1
-#  ports:
-#    - 9200:9200
-#    - 9300:9300
-#  volumes:
-#    - ./data/elastic:/usr/share/elasticsearch/data
+registry:
+  image: registry:2.1.1
+  ports:
+    - 5000:5000
+  volumes:
+    - ./data/registry:/var/lib/registry
