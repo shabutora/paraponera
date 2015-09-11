@@ -1,5 +1,6 @@
 package net.iyh.scheduller;
 
+import lombok.extern.slf4j.Slf4j;
 import net.iyh.helper.RegistryHostHelper;
 import net.iyh.model.ContainerImage;
 import net.iyh.model.RegistryHost;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,6 +26,7 @@ import java.util.List;
  * Created by tsukasa on 2015/09/07.
  */
 @Component
+@Slf4j
 public class RegistryImportSchedule {
 
   @Autowired RegistryHostRepository regRepo;
@@ -37,6 +40,7 @@ public class RegistryImportSchedule {
   String tagsUri;
 
   @Scheduled(cron = "${schedule.registry.import}")
+//  @Scheduled(fixedRate = 10000) // 実験用に残しとく
   public void importImages() {
     List<RegistryHost> list = this.regRepo.get();
     RestTemplate restTemplate = new RestTemplate();
@@ -54,7 +58,7 @@ public class RegistryImportSchedule {
         return res.getBody().getRepositories();
       }
     } catch (ResourceAccessException ex) {
-      System.out.println("Ooops");
+      log.warn("Failed read catalog. " + url, ex);
     }
     return new ArrayList<>();
   }
@@ -63,10 +67,15 @@ public class RegistryImportSchedule {
     repositoryNames.stream().forEach(n -> {
       String uri = UriComponentsBuilder.fromUriString(host.getUrl())
                                        .pathSegment(n).pathSegment(this.tagsUri).build().toUriString();
-      ResponseEntity<Image> res = restTemplate.getForEntity(uri, Image.class);
-      if (res.getStatusCode().is2xxSuccessful()) {
-        Image image = res.getBody();
-        imgRepo.save(new ContainerImage(host.getName(), image.getName(), image.getTags()));
+      log.info(uri);
+      try {
+        ResponseEntity<Image> res = restTemplate.getForEntity(uri, Image.class);
+        if (res.getStatusCode().is2xxSuccessful()) {
+          Image image = res.getBody();
+          imgRepo.save(new ContainerImage(host.getName(), image.getName(), image.getTags()));
+        }
+      } catch (HttpClientErrorException ex) {
+        log.warn("OOOOOOOps!!! failed import tags. status = " + ex.getStatusCode().toString() + " " + uri);
       }
     });
   }
