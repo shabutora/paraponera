@@ -26,8 +26,8 @@ public class ContainerImageRepository {
   @Autowired
   ObjectMapper mapper;
 
-  public List<ContainerImage> getAll() {
-    Set<String> keys = this.redisTemplate.keys("registry:host:*");
+  public List<ContainerImage> getByHost(String hostName) {
+    Set<String> keys = this.redisTemplate.keys(String.format("image:%s:*", hostName));
     return keys.stream().map(k -> this.getSingle(k)).collect(Collectors.toList());
   }
 
