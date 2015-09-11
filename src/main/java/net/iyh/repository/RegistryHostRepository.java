@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collector;
@@ -30,7 +31,10 @@ public class RegistryHostRepository {
 
   public List<RegistryHost> get() {
     Set<String> keys = this.stringRedisTemplate.keys("registry:host:*");
-    List<RegistryHost> list = keys.stream().map(k -> this.get(k)).collect(Collectors.toList());
+    List<RegistryHost> list = keys.stream()
+                                  .map(k -> this.get(k))
+                                  .sorted(Comparator.comparing(RegistryHost::getName))
+                                  .collect(Collectors.toList());
     return list;
   }
 

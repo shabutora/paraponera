@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,7 +29,10 @@ public class ContainerImageRepository {
 
   public List<ContainerImage> getByHost(String hostName) {
     Set<String> keys = this.redisTemplate.keys(String.format("image:%s:*", hostName));
-    return keys.stream().map(k -> this.getSingle(k)).collect(Collectors.toList());
+    return keys.stream()
+               .map(k -> this.getSingle(k))
+               .sorted(Comparator.comparing(ContainerImage::getImageName))
+               .collect(Collectors.toList());
   }
 
   public ContainerImage getSingle(String key) {
