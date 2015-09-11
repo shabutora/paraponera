@@ -21,7 +21,9 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap-material-design": "~0.3.0",
-    "react": "~0.13.3"
+    "angular": "~1.4.5",
+    "angular-resource": "~1.4.5",
+    "bootstrap": "~3.3.5",
+    "bootstrap-material-design": "~0.3.0"
   }
 }

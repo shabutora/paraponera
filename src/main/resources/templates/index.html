@@ -1,20 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="paraponera">
 <head>
     <meta charset="UTF-8"/>
-    <title>Docker Registry Host List</title>
-    <script src="components/react/react.js"></script>
-    <script src="components/react/JSXTransformer.js"></script>
-    <script src="components/bootstrap-material-design/dist/js/material.min.js"></script>
+    <title>Paraponera</title>
+    <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="components/bootstrap-material-design/dist/css/material.min.css"/>
+    <link rel="icon" href="favicon.ico"/>
 </head>
 <body>
-<div id="example"></div>
-<script type="text/jsx">
-    React.render(
-            <h1>Hello, world!</h1>,
-            document.getElementById('example')
-    );
-</script>
+<div class="container">
+    <div class="page-header" id="banner">
+        <div class="row">
+            <div>
+                <h1>Docker Registry Container List</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-controller="host_ctrl">
+        <div class="col-lg-12" ng-repeat="host in hosts">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="mdi-hardware-desktop-mac"></i>&nbsp;
+                        {{host.name}}&nbsp;
+                        <a href="{{host.url}}" target="registry">[LINK]</a>
+                    </h4>
+                </div>
+                <div class="panel-body" ng-controller="image_ctrl">
+                    <div class="panel panel-primary" ng-repeat="image in images">
+                        <div class="panel-heading">
+                            <h4>{{image.image_name}}</h4>
+                        </div>
+                        <div class="panel-body" ng-controller="tag_ctrl">
+                            <div class="" ng-repeat="tag in tags">
+                                <span>{{tag}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/bootstrap-material-design/dist/js/material.min.js"></script>
+<script src="components/angular/angular.min.js"></script>
+<script src="components/angular-resource/angular-resource.min.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
