@@ -185,3 +185,4 @@ dist/
 # application ignore
 data
 **/static/components
+docker/*.zip

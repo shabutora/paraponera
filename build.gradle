@@ -3,24 +3,31 @@ buildscript {
     springBootVersion = '1.3.0.M5'
   }
   repositories {
+    jcenter()
     mavenCentral()
     maven { url "https://repo.spring.io/snapshot" }
     maven { url "https://repo.spring.io/milestone" }
   }
   dependencies {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    classpath 'org.springframework:springloaded:1.2.0.RELEASE'
+    classpath("org.springframework:springloaded:1.2.0.RELEASE")
+    classpath("se.transmode.gradle:gradle-docker:1.2")
   }
 }
 
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'docker'
 
+ext {
+  applicationVersion = '0.0.1-SNAPSHOT'
+}
 jar {
   baseName = 'paraponera'
-  version = '0.0.1-SNAPSHOT'
+  version = "$applicationVersion"
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -68,4 +75,23 @@ idea {
 
 task wrapper(type: Wrapper) {
   gradleVersion = '2.6'
+}
+
+distZip {
+  archiveName = 'paraponera.zip'
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+  description 'Build docker container image.'
+  push = false
+  project.group = 'shabutora'
+  applicationName = 'paraponera'
+  tagVersion = "$applicationVersion"
+  dockerfile = file('docker/Dockerfile')
+  doFirst {
+    copy {
+      from "build/distributions/paraponera.zip"
+      into "$buildDir/docker"
+    }
+  }
 }
