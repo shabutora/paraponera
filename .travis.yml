@@ -1,0 +1,10 @@
+sudo: required
+language: java
+service:
+  - docker
+jdk:
+  - oraclejdk8
+script:
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - ./gradlew clean build buildDocker
+  - docker push shabutora/paraponera:0.0.1-SNAPSHOT
