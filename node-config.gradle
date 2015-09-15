@@ -1,0 +1,5 @@
+node {
+  version = '0.12.7'
+  npmVersion = '2.14.2'
+  download = true
+}

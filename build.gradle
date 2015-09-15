@@ -12,6 +12,7 @@ buildscript {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     classpath("org.springframework:springloaded:1.2.0.RELEASE")
     classpath("se.transmode.gradle:gradle-docker:1.2")
+    classpath("com.moowork.gradle:gradle-node-plugin:0.10")
   }
 }
 
@@ -21,6 +22,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'docker'
+apply plugin: 'com.moowork.node'
 
 ext {
   applicationVersion = '0.0.1-SNAPSHOT'
@@ -81,6 +83,9 @@ distZip {
   archiveName = 'paraponera.zip'
 }
 
+/**
+ * Docker
+ */
 task buildDocker(type: Docker, dependsOn: build) {
   description 'Build docker container image.'
   push = false
@@ -95,3 +100,47 @@ task buildDocker(type: Docker, dependsOn: build) {
     }
   }
 }
+
+/**
+ * Frontend
+ */
+task npmCacheConfig(type: NpmTask) {
+  description = "Configure the npm cache"
+  def npmCacheDir = "${gradle.getGradleUserHomeDir()}/caches/npm"
+  outputs.files file(npmCacheDir)
+  args = ['config', 'set', 'cache', npmCacheDir]
+}
+
+task npmPackages(type: NodeTask) {
+  description = "Install node.js packages"
+  args = ['install']
+  inputs.files file('package.json')
+  outputs.files file('node_modules')
+}
+
+task bowerInstall(type: NodeTask, dependsOn: npmInstall) {
+  description = 'Install bower packages'
+  script = file('node_modules/bower/bin/bower')
+  def bowerCacheDir = "${gradle.getGradleUserHomeDir()}/caches/bower"
+  args = ["--config.storage.cache=${bowerCacheDir}/cache",
+          "--config.storage.packages=${bowerCacheDir}/packages",
+          "--config.storage.registry=${bowerCacheDir}/registry",
+          'install']
+  inputs.files file('bower.json')
+  outputs.files file('bower_components')
+}
+
+task bowerSync(type: Sync) {
+  from 'bower_components'
+  into 'src/main/resources/static/components'
+}
+
+task bowerPackages() {
+  dependsOn bowerSync
+}
+
+task bowerPackages(type:clean) {
+
+}
+
+processResources.dependsOn bowerPackages
