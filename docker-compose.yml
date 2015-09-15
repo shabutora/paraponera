@@ -1,13 +1,13 @@
+paraponera:
+  image: shabutora/paraponera
+  ports:
+    - 8080:8080
+  links:
+    - redis
+  environment:
+    - SPRING_REDIS_HOST=redis
+
 redis:
   image: redis:3.0.3
-  ports:
-    - 6379:6379
   volumes:
-    - ./data/redis:/data
-
-registry:
-  image: registry:2.1.1
-  ports:
-    - 5000:5000
-  volumes:
-    - ./data/registry:/var/lib/registry
+    - /data:/data
