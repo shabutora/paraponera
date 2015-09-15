@@ -139,8 +139,4 @@ task bowerPackages() {
   dependsOn bowerSync
 }
 
-task bowerPackages(type:clean) {
-
-}
-
 processResources.dependsOn bowerPackages
