@@ -25,7 +25,7 @@ apply plugin: 'docker'
 apply plugin: 'com.moowork.node'
 
 ext {
-  applicationVersion = '0.0.1-SNAPSHOT'
+  applicationVersion = '0.0.2-SNAPSHOT'
 }
 jar {
   baseName = 'paraponera'
