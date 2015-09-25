@@ -7,6 +7,7 @@ import net.iyh.model.RegistryHost;
 import net.iyh.model.response.Catalog;
 import net.iyh.model.response.Image;
 import net.iyh.repository.ContainerImageRepository;
+import net.iyh.repository.ManifestRepository;
 import net.iyh.repository.RegistryHostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +30,12 @@ import java.util.List;
 @Slf4j
 public class RegistryImportSchedule {
 
-  @Autowired RegistryHostRepository regRepo;
+  @Autowired
+  RegistryHostRepository regRepo;
   @Autowired
   ContainerImageRepository imgRepo;
+  @Autowired
+  ManifestRepository maniRepo;
 
   @Value("${registry.v2.catalog}")
   String catalogUri;
@@ -73,10 +77,21 @@ public class RegistryImportSchedule {
         if (res.getStatusCode().is2xxSuccessful()) {
           Image image = res.getBody();
           imgRepo.save(new ContainerImage(host.getName(), image.getName(), image.getTags()));
+          this.manifests(restTemplate, host, image);
         }
       } catch (HttpClientErrorException ex) {
         log.warn("OOOOOOOps!!! failed import tags. status = " + ex.getStatusCode().toString() + " " + uri);
       }
+    });
+  }
+
+  private void manifests(RestTemplate restTemplate, RegistryHost host, Image image) {
+    image.getTags().stream().map(t -> {
+      return this.maniRepo.request(host, image.getName(), t);
+    }).forEach(m -> {
+      m.ifPresent(mf -> {
+        this.maniRepo.save(mf);
+      });
     });
   }
 }

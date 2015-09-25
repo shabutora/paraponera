@@ -6,6 +6,7 @@ registry:
     version: v2
     catalog: _catalog
     tags: tags/list
+    manifests: manifests
 schedule:
   registry:
     import: "0/30 * * * * *"
