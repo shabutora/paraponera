@@ -88,7 +88,7 @@ distZip {
  */
 task buildDocker(type: Docker, dependsOn: build) {
   description 'Build docker container image.'
-  push = false
+  push = true
   project.group = 'shabutora'
   applicationName = 'paraponera'
   tagVersion = "$applicationVersion"
