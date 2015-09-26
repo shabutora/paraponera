@@ -34,17 +34,19 @@ public class ManifestRepository {
   @Autowired
   ObjectMapper mapper;
 
+  @Autowired
+  RestTemplate restTemplate;
+
   @Value("${registry.v2.manifests}")
   String manifestUri;
 
   public Optional<Manifest> request(RegistryHost host, String image, String tag) {
-    RestTemplate restTemplate = new RestTemplate();
     String uri = UriComponentsBuilder.fromUriString(host.getUrl())
                                          .pathSegment(image)
                                          .pathSegment(this.manifestUri)
                                          .pathSegment(tag).build().toUriString();
     try {
-      ResponseEntity<Manifest> res = restTemplate.getForEntity(uri, Manifest.class);
+      ResponseEntity<Manifest> res = this.restTemplate.getForEntity(uri, Manifest.class);
       Manifest manifest = res.getBody();
       manifest.setHost(host.getName());
       manifest.setDigest(res.getHeaders().get("Docker-Content-Digest").get(0));
