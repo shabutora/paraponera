@@ -10,7 +10,7 @@ app.controller("host_ctrl", function($scope, $location, $http, $filter, $log){
 });
 
 app.controller("image_ctrl", function($scope, $location, $http, $filter, $log, $resource){
-    $http({ method: 'GET', url: './images/' + $scope.host.name, "Content-Type": 'application/json'})
+    $http({ method: 'GET', url: './images/' + $scope.host.name + "/flat", "Content-Type": 'application/json'})
         .success(function (images) {
             console.log(images);
             $scope.images = images;
