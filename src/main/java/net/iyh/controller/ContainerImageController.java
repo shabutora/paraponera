@@ -1,18 +1,18 @@
 package net.iyh.controller;
 
 import net.iyh.model.ContainerImage;
+import net.iyh.model.RegistryHost;
 import net.iyh.model.response.Manifest;
 import net.iyh.repository.ContainerImageRepository;
 import net.iyh.repository.ManifestRepository;
+import net.iyh.repository.RegistryHostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/images")
 public class ContainerImageController {
+  @Autowired RegistryHostRepository hostRepo;
   @Autowired ContainerImageRepository repo;
   @Autowired ManifestRepository manRepo;
 
@@ -48,5 +49,44 @@ public class ContainerImageController {
               .map(m -> m.get());
     }).collect(Collectors.toList());
     return ResponseEntity.ok(manifests);
+  }
+
+  @RequestMapping(value = "/{host}/{image}",
+                  method = RequestMethod.DELETE,
+                  produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<String> delete(
+    @PathVariable String host,
+    @PathVariable String image,
+    @RequestParam("tag") Optional<String> tag) {
+    this.deleteImage(host, Optional.empty(), image, tag);
+    return ResponseEntity.ok("success delete container image");
+  }
+
+  @RequestMapping(value = "/{host}/{user}/{image}",
+                  method = RequestMethod.DELETE,
+                  produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<String> delete(
+    @PathVariable String host,
+    @PathVariable String user,
+    @PathVariable String image,
+    @RequestParam("tag") Optional<String> tag) {
+    this.deleteImage(host, Optional.of(user), image, tag);
+    return ResponseEntity.ok("success delete container image");
+  }
+
+  /**
+   * コンテナイメージ削除
+   * @param host
+   * @param user
+   * @param image
+   * @param tag
+   * @return
+   */
+  private void deleteImage(String host, Optional<String> user, String image, Optional<String> tag) {
+    RegistryHost h = this.hostRepo.get(RegistryHost.createKey(host));
+    StringBuilder i = new StringBuilder(image);
+    user.ifPresent(u -> i.insert(0, u).insert(u.length(), "/"));
+    Optional<Manifest> manifest = this.manRepo.get(host, i.toString(), tag.orElse("latest"));
+    manifest.ifPresent(m -> this.manRepo.delete(h, m));
   }
 }

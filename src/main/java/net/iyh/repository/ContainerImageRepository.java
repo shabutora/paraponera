@@ -108,11 +108,4 @@ public class ContainerImageRepository {
       e.printStackTrace();
     }
   }
-
-  public void delete(String hostName, String imageName) {
-    this.redisTemplate.delete(ContainerImage.createKey(hostName, imageName));
-  }
-  public void delete(ContainerImage image) {
-    this.redisTemplate.delete(image.getKey());
-  }
 }

@@ -34,14 +34,16 @@
                         <tr>
                             <td>Image</td>
                             <td>Tag</td>
-                            <td>Delete</td>
+                            <td>Command</td>
+                            <!--<td>Delete</td>-->
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="image in images | filter:filterText">
                             <td><span>{{image.name}}</span></td>
                             <td><span>{{image.tag}}</span></td>
-                            <td><a href="javascript:void(0)" class="btn btn-danger btn-raised btn-xs">DELETE</a></td>
+                            <td><input type="text" value="docker pull {{host.host}}:{{host.port}}/{{image.name}}:{{image.tag}}"/></td>
+                            <!--<td><a href="javascript:void(0)" ng-click="delete(host.host, image.name, image.tag)" class="btn btn-danger btn-raised btn-xs" data-digest="{{image.digest}}">DELETE</a></td>-->
                         </tr>
                         </tbody>
                     </table>
