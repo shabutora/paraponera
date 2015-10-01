@@ -26,6 +26,7 @@ apply plugin: 'com.moowork.node'
 
 ext {
   applicationVersion = '0.0.2'
+  bowerLocation = 'src/main/resources/static/components'
 }
 jar {
   baseName = 'paraponera'
@@ -132,7 +133,7 @@ task bowerInstall(type: NodeTask, dependsOn: npmInstall) {
 
 task bowerSync(type: Sync) {
   from 'bower_components'
-  into 'src/main/resources/static/components'
+  into "$bowerLocation"
 }
 
 task bowerPackages() {
@@ -140,3 +141,8 @@ task bowerPackages() {
 }
 
 processResources.dependsOn bowerPackages
+
+// clean
+clean {
+  delete "$bowerLocation"
+}
