@@ -10,13 +10,18 @@ app.controller("host_ctrl", function($scope, $location, $http, $filter, $log){
 });
 
 app.controller("image_ctrl", function($scope, $location, $http, $filter, $log, $resource){
-    $http({ method: 'GET', url: './images/' + $scope.host.name, "Content-Type": 'application/json'})
+    $http({ method: 'GET', url: './images/' + $scope.host.name + "/flat", "Content-Type": 'application/json'})
         .success(function (images) {
-            console.log(images);
+            //console.log(images);
             $scope.images = images;
         }).error(function (msg) {
             console.error(msg);
         });
+    $scope.delete = function (host, image, tag) {
+        if (confirm("Delete image?")) {
+            $http({method: "DELETE", url: './'})
+        }
+    }
 });
 
 app.controller("tag_ctrl", function ($scope) {

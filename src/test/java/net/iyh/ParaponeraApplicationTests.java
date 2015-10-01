@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ParaponeraApplication.class)
 @WebAppConfiguration
-public class DemoApplicationTests {
+public class ParaponeraApplicationTests {
 
   @Autowired ObjectMapper mapper;
 

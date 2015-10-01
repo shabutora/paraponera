@@ -186,3 +186,4 @@ dist/
 data
 **/static/components
 docker/*.zip
+docker-compose.yml

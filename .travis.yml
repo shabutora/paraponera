@@ -6,5 +6,13 @@ jdk:
   - oraclejdk8
 script:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - ./gradlew clean build buildDocker
-  - docker push shabutora/paraponera:0.0.1-SNAPSHOT
+  - ./gradlew clean build buildDocker -x test
+notifications:
+  slack: honto:YPqrDw3ZIM3boed1m7g7VIT4
+cache:
+  directories:
+    - $HOME/.gradle/wrapper
+    - $HOME/.gradle/native
+    - $HOME/.gradle/daemon
+    - $HOME/.gradle/caches/jars-1
+    - $HOME/.gradle/caches/2.6
