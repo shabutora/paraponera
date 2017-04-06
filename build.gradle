@@ -47,7 +47,7 @@ dependencies {
   compile("org.springframework.boot:spring-boot-actuator-docs")
   compile("org.springframework.boot:spring-boot-starter-cache")
   compile("org.springframework.boot:spring-boot-starter-redis")
-  compile("org.projectlombok:lombok")
+  compile("org.projectlombok:lombok:1.16.16")
   compile("org.springframework.boot:spring-boot-starter-remote-shell")
   compile("org.springframework.boot:spring-boot-starter-thymeleaf")
   compile("org.springframework.boot:spring-boot-starter-web")
