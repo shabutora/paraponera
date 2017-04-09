@@ -12,8 +12,14 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
+
+
 /**
- * Created by tsukasa on 2015/09/26.
+ * TODO Registryのデータの事前準備未実装(docker java clientを使うか)
+ * TODO 依存関係のDocker Registryの起動もセットアップでやれたらいいなあ
+ *
+ * Require: Run docker registry on local.(ver.2.2)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ParaponeraApplication.class)
@@ -23,9 +29,28 @@ public class ManifestRepositoryTest {
   @Autowired
   ManifestRepository repo;
 
+  private static final RegistryHost TEST_REGISTRY = new RegistryHost("localhost", "localhost");
+
   @Test
   public void testRequestNormal() throws Exception {
-    RegistryHost host = new RegistryHost("localhost", "localhost");
-    Optional<Manifest> manifest = this.repo.request(host, "busybox", "1.23.2");
+    Optional<Manifest> manifest = this.repo.request(TEST_REGISTRY, "busybox", "1.23.2");
+    assertThat(manifest.get().getHost()).isEqualTo("localhost");
+    assertThat(manifest.get().getName()).isEqualTo("busybox");
+    assertThat(manifest.get().getTag()).isEqualTo("1.23.2");
+  }
+
+  @Test
+  public void testRequestNotFound() throws Exception {
+    Optional<Manifest> actual = this.repo.request(TEST_REGISTRY, "not-found-image", "tagtagtag");
+    assertThat(actual).isEmpty();
+  }
+
+  @Test
+  public void testSaveManifest() throws Exception {
+    Manifest data = new Manifest();
+    data.setHost("test-host");
+    data.setName("test-image");
+    data.setTag("test-tag");
+    this.repo.save(data);
   }
 }
